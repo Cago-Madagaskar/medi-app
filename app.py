@@ -1,7 +1,7 @@
 import streamlit as st
 from difflib import SequenceMatcher
 
-st.set_page_config(page_title="Hastalık Çözüm Asistanı", page_icon="💊", layout="centered")
+st.set_page_config(page_title="Medi-Bot", page_icon="💊", layout="centered")
 
 st.markdown("""
     <style>
@@ -42,8 +42,8 @@ hastalik_cozum_db = {
 hastaliklar = list(hastalik_cozum_db.keys())
 cozumler = list(hastalik_cozum_db.values())
 
-st.title("💊 Hastalık Belirtisi Çözüm Asistanı")
-st.markdown("🔍 Aşağıya sahip olduğunuz belirtiyi yazınız ki hastalığınına çözüm önerelim.")
+st.title("💊 Medi-Bot")
+st.markdown("🔍 Aşağıya sahip olduğunuz belirtiyi yazınız ")
 
 user_input = st.text_input("📝 Belirti giriniz:", placeholder="örnek: boğazım ağrıyor, midem bulanıyor...")
 
