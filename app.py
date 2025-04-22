@@ -47,7 +47,7 @@ cozumler = list(hastalik_cozum_db.values())
 
 # Başlık ve açıklama
 st.title("💊 Hastalık Belirtisi Çözüm Asistanı")
-st.markdown("🔍 Aşağıya bir belirti yaz, sana en yakın hastalığı bulalım ve çözüm önerelim.")
+st.markdown("🔍 Aşağıya bir belirti yaz, hastalığını bulalım ve çözüm önerelim.")
 
 # Giriş
 user_input = st.text_input("📝 Belirti giriniz:", placeholder="örnek: boğazım ağrıyor, midem bulanıyor...")
@@ -59,7 +59,7 @@ def calculate_similarity(str1, str2):
 # Buton
 if st.button("🚀 Çözüm Bul"):
     if not user_input.strip():
-        st.warning("⚠️ Lütfen bir belirti girin.")
+        st.warning("⚠️ Lütfen bir belirti giriniz.")
     else:
         # En benzer hastalığı bul
         best_match = None
