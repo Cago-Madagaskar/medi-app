@@ -1,7 +1,4 @@
 import streamlit as st
-import numpy as np
-from sklearn.feature_extraction.text import TfidfVectorizer
-from sklearn.metrics.pairwise import cosine_similarity
 from difflib import SequenceMatcher
 
 # Sayfa ayarları
@@ -42,10 +39,7 @@ hastalik_cozum_db = {
     "grip": "İstirahat et, bol sıvı al ve sıcak içecekler tüket.",
     "boğaz ağrısı": "Sıcak tuzlu su ile gargara yap, dinlen.",
     "burun tıkanıklığı": "Burun spreyi kullan veya buruna tuzlu su çek.",
-    "tansiyon": "Çok tuz tüketme, bol su al.",
-    "mide ağrısı": "Yavaş yemek ye, ağır yiyeceklerden kaçın.",
-    "kas çekmesi": "Gergin kasları rahatlatacak masajlar yap.",
-    "diyabet": "Şeker seviyeni izleyip sağlıklı beslenmeye özen göster."
+    "tansiyon": "Çok tuz tüketme, bol su al."
 }
 
 hastaliklar = list(hastalik_cozum_db.keys())
@@ -58,40 +52,34 @@ st.markdown("🔍 Aşağıya bir belirti yaz, sana en yakın hastalığı bulal�
 # Giriş
 user_input = st.text_input("📝 Belirti giriniz:", placeholder="örnek: boğazım ağrıyor, midem bulanıyor...")
 
-# Benzerlik hesaplama fonksiyonu (Türkçe kelimeleri karşılaştır)
-def similar(a, b):
-    return SequenceMatcher(None, a, b).ratio()
+# Benzerlik Hesaplama Fonksiyonu (SequenceMatcher kullanarak)
+def calculate_similarity(str1, str2):
+    return SequenceMatcher(None, str1, str2).ratio()
 
 # Buton
 if st.button("🚀 Çözüm Bul"):
     if not user_input.strip():
         st.warning("⚠️ Lütfen bir belirti girin.")
     else:
-        # Hastalıkları ve çözümleri birleştiriyoruz
-        hastalik_aciklama = [f"{hastalik}: {cozum}" for hastalik, cozum in zip(hastaliklar, cozumler)]
-        hastalik_aciklama.append(user_input)
+        # En benzer hastalığı bul
+        best_match = None
+        highest_similarity = 0
 
-        # TF-IDF ile eşleşme
-        vectorizer = TfidfVectorizer()
-        tfidf_matrix = vectorizer.fit_transform(hastalik_aciklama)
-        cosine_similarities = cosine_similarity(tfidf_matrix[-1], tfidf_matrix[:-1])
-
-        # Benzerlik skorunu al
-        most_similar_index = np.argmax(cosine_similarities)
-        en_benzer_hastalik = hastaliklar[most_similar_index]
-        cozum = cozumler[most_similar_index]
-        skor = float(np.max(cosine_similarities)) * 100
-
-        # Benzerlik oranını daha doğru almak için SequenceMatcher ile de karşılaştırma yapalım
-        similarity_score = similar(user_input, en_benzer_hastalik) * 100
+        for hastalik in hastaliklar:
+            similarity = calculate_similarity(user_input.lower(), hastalik.lower())
+            if similarity > highest_similarity:
+                highest_similarity = similarity
+                best_match = hastalik
 
         # Sonuç göster
-        st.success(f"✅ En benzer hastalık: **{en_benzer_hastalik}**")
-        st.info(f"💡 Önerilen çözüm:\n\n{cozum}")
-        st.caption(f"Güven skoru: %{skor:.2f}")
-        st.caption(f"Benzerlik oranı (kelime düzeltme ile): %{similarity_score:.2f}")
-
-
+        if best_match and highest_similarity > 0.2:  # En düşük benzerlik sınırı (örneğin %20)
+            st.success(f"✅ En benzer hastalık: **{best_match}**")
+            st.info(f"💡 Önerilen çözüm:\n\n{hastalik_cozum_db[best_match]}")
+            st.write(f"🔍 Benzerlik Skoru: %{highest_similarity * 100:.2f}")
+        else:
+            st.warning("⚠️ Benzer bir hastalık bulunamadı.")
+    
 # Footer
 st.markdown("---")
-st.caption("🧠 Bu uygulama tıbbı açıdan doğru bilgilerden oluşmaktadır ama ciddi komplikasyonlarda lütfen bir doktara danışınız.")
+st.caption("🧠 Bu uygulama sadece bilgilendirme amaçlıdır. Ciddi durumlarda bir sağlık profesyoneline danışın.")
+
