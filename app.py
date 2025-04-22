@@ -72,7 +72,7 @@ if st.button("🚀 Çözüm Bul"):
                 best_match = hastalik
 
         # Sonuç göster
-        if best_match and highest_similarity > 0.2:  # En düşük benzerlik sınırı (örneğin %20)
+        if best_match and highest_similarity > 0.35:  # En düşük benzerlik sınırı (örneğin %20)
             st.success(f"✅ En benzer hastalık: **{best_match}**")
             st.info(f"💡 Önerilen çözüm:\n\n{hastalik_cozum_db[best_match]}")
             st.write(f"🔍 Benzerlik Skoru: %{highest_similarity * 100:.2f}")
