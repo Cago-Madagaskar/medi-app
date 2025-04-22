@@ -81,5 +81,5 @@ if st.button("🚀 Çözüm Bul"):
     
 # Footer
 st.markdown("---")
-st.caption("🧠 Bu uygulama sadece bilgilendirme amaçlıdır. Ciddi durumlarda bir sağlık profesyoneline danışın.")
+st.caption("🧠 Bu uygulama sadece bilgilendirme amaçlıdır. Lütfen ciddi komplikasyonlarda bir doktora danışın.")
 
