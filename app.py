@@ -41,7 +41,10 @@ hastalik_cozum_db = {
     "grip": "İstirahat et, bol sıvı al ve sıcak içecekler tüket.",
     "boğaz ağrısı": "Sıcak tuzlu su ile gargara yap, dinlen.",
     "burun tıkanıklığı": "Burun spreyi kullan veya buruna tuzlu su çek.",
-    "tansiyon": "Çok tuz tüketme, bol su al."
+    "tansiyon": "Çok tuz tüketme, bol su al.",
+    "mide ağrısı": "Yavaş yemek ye, ağır yiyeceklerden kaçın.",
+    "kas çekmesi": "Gergin kasları rahatlatacak masajlar yap.",
+    "diyabet": "Şeker seviyeni izleyip sağlıklı beslenmeye özen göster."
 }
 
 hastaliklar = list(hastalik_cozum_db.keys())
@@ -59,18 +62,26 @@ if st.button("🚀 Çözüm Bul"):
     if not user_input.strip():
         st.warning("⚠️ Lütfen bir belirti girin.")
     else:
+        # Hastalıkları ve çözümleri birleştiriyoruz
+        hastalik_aciklama = [f"{hastalik}: {cozum}" for hastalik, cozum in zip(hastaliklar, cozumler)]
+        hastalik_aciklama.append(user_input)
+
         # TF-IDF ile eşleşme
         vectorizer = TfidfVectorizer()
-        tfidf_matrix = vectorizer.fit_transform(hastaliklar + [user_input])
+        tfidf_matrix = vectorizer.fit_transform(hastalik_aciklama)
         cosine_similarities = cosine_similarity(tfidf_matrix[-1], tfidf_matrix[:-1])
+        
+        # Benzerlik skorunu al
         most_similar_index = np.argmax(cosine_similarities)
         en_benzer_hastalik = hastaliklar[most_similar_index]
         cozum = cozumler[most_similar_index]
+        skor = float(np.max(cosine_similarities)) * 100
 
         # Sonuç göster
         st.success(f"✅ En benzer hastalık: **{en_benzer_hastalik}**")
         st.info(f"💡 Önerilen çözüm:\n\n{cozum}")
+        st.caption(f"Güven skoru: %{skor:.2f}")
 
 # Footer
 st.markdown("---")
-st.caption("🧠 Bu uygulama tıbbi açıdan doğru bilgilerden oluşsa bile ciddi komplikasyonlarda lütfen bir doktora danışınız.")
+st.caption("🧠 Bu uygulama tıbbı açıdan doğru bilgilerden oluşmaktadır ama ciddi komplikasyonlarda lütfen bir doktara danışınız.")
