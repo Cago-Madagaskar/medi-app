@@ -1,19 +1,17 @@
 import streamlit as st
 from difflib import SequenceMatcher
 
-# Sayfa ayarları
 st.set_page_config(page_title="Hastalık Çözüm Asistanı", page_icon="💊", layout="centered")
 
-# Stil
 st.markdown("""
     <style>
     .main {
-        background-color: #f0f2f6;
+        background-color: #30353d;
         padding: 2rem;
         border-radius: 10px;
     }
     .stButton > button {
-        background-color: #4CAF50;
+        background-color: #0098b3;
         color: white;
         padding: 10px 16px;
         border-radius: 10px;
@@ -28,7 +26,6 @@ st.markdown("""
     </style>
 """, unsafe_allow_html=True)
 
-# Veri tabanı
 hastalik_cozum_db = {
     "soğuk algınlığı": "Bol su iç, dinlen, vitamin C al.",
     "baş ağrısı": "Yeterli uyku al, bol su iç, sakinleşmek için derin nefes al.",
@@ -45,23 +42,19 @@ hastalik_cozum_db = {
 hastaliklar = list(hastalik_cozum_db.keys())
 cozumler = list(hastalik_cozum_db.values())
 
-# Başlık ve açıklama
 st.title("💊 Hastalık Belirtisi Çözüm Asistanı")
-st.markdown("🔍 Aşağıya bir belirti yaz, hastalığını bulalım ve çözüm önerelim.")
+st.markdown("🔍 Aşağıya sahip olduğunuz belirtiyi yazınız ki hastalığınına çözüm önerelim.")
 
-# Giriş
 user_input = st.text_input("📝 Belirti giriniz:", placeholder="örnek: boğazım ağrıyor, midem bulanıyor...")
 
-# Benzerlik Hesaplama Fonksiyonu (SequenceMatcher kullanarak)
 def calculate_similarity(str1, str2):
     return SequenceMatcher(None, str1, str2).ratio()
 
-# Buton
 if st.button("🚀 Çözüm Bul"):
     if not user_input.strip():
         st.warning("⚠️ Lütfen bir belirti giriniz.")
     else:
-        # En benzer hastalığı bul
+
         best_match = None
         highest_similarity = 0
 
@@ -71,15 +64,13 @@ if st.button("🚀 Çözüm Bul"):
                 highest_similarity = similarity
                 best_match = hastalik
 
-        # Sonuç göster
-        if best_match and highest_similarity > 0.35:  # En düşük benzerlik sınırı (örneğin %20)
+        if best_match and highest_similarity > 0.35:  
             st.success(f"✅ En benzer hastalık: **{best_match}**")
             st.info(f"💡 Önerilen çözüm:\n\n{hastalik_cozum_db[best_match]}")
             st.write(f"🔍 Benzerlik Skoru: %{highest_similarity * 100:.2f}")
         else:
             st.warning("⚠️ Benzer bir hastalık bulunamadı.")
     
-# Footer
 st.markdown("---")
-st.caption("🧠 Bu uygulama sadece bilgilendirme amaçlıdır. Lütfen ciddi komplikasyonlarda bir doktora danışın.")
+st.caption("🧠 Bu uygulama sadece bilgilendirme amaçlıdır. Lütfen ciddi komplikasyonlarda bir doktora danışınız.")
 
