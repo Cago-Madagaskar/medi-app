@@ -2,6 +2,7 @@ import streamlit as st
 import numpy as np
 from sklearn.feature_extraction.text import TfidfVectorizer
 from sklearn.metrics.pairwise import cosine_similarity
+from difflib import SequenceMatcher
 
 # Sayfa ayarları
 st.set_page_config(page_title="Hastalık Çözüm Asistanı", page_icon="💊", layout="centered")
@@ -57,6 +58,10 @@ st.markdown("🔍 Aşağıya bir belirti yaz, sana en yakın hastalığı bulal�
 # Giriş
 user_input = st.text_input("📝 Belirti giriniz:", placeholder="örnek: boğazım ağrıyor, midem bulanıyor...")
 
+# Benzerlik hesaplama fonksiyonu (Türkçe kelimeleri karşılaştır)
+def similar(a, b):
+    return SequenceMatcher(None, a, b).ratio()
+
 # Buton
 if st.button("🚀 Çözüm Bul"):
     if not user_input.strip():
@@ -70,17 +75,22 @@ if st.button("🚀 Çözüm Bul"):
         vectorizer = TfidfVectorizer()
         tfidf_matrix = vectorizer.fit_transform(hastalik_aciklama)
         cosine_similarities = cosine_similarity(tfidf_matrix[-1], tfidf_matrix[:-1])
-        
+
         # Benzerlik skorunu al
         most_similar_index = np.argmax(cosine_similarities)
         en_benzer_hastalik = hastaliklar[most_similar_index]
         cozum = cozumler[most_similar_index]
         skor = float(np.max(cosine_similarities)) * 100
 
+        # Benzerlik oranını daha doğru almak için SequenceMatcher ile de karşılaştırma yapalım
+        similarity_score = similar(user_input, en_benzer_hastalik) * 100
+
         # Sonuç göster
         st.success(f"✅ En benzer hastalık: **{en_benzer_hastalik}**")
         st.info(f"💡 Önerilen çözüm:\n\n{cozum}")
         st.caption(f"Güven skoru: %{skor:.2f}")
+        st.caption(f"Benzerlik oranı (kelime düzeltme ile): %{similarity_score:.2f}")
+
 
 # Footer
 st.markdown("---")
