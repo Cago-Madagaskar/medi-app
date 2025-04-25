@@ -91,7 +91,7 @@ if st.button("🚀 **Çözüm Bul**"):
                 highest_similarity = similarity
                 best_match = hastalik
 
-        if best_match and highest_similarity > 0.35:  
+        if best_match and highest_similarity > 0.4:  
             st.success(f"✅ **En benzer hastalık:** {best_match}")
             st.info(f"💡 **Önerilen çözüm:**\n\n{hastalik_cozum_db[best_match]}")
             st.write(f"🔍 **Benzerlik Skoru:** %{highest_similarity * 100:.2f}")
