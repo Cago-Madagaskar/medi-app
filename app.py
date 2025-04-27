@@ -28,7 +28,7 @@ st.markdown("""
         margin-top: 20px;
     }
     .stTextInput > div > input:focus {
-        border-color: #0098b3;
+        border-color: #6e6e73;
     }
     .stMarkdown {
         font-size: 18px;
