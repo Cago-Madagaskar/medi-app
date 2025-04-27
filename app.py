@@ -5,7 +5,7 @@ st.set_page_config(page_title="Medi-Bot", page_icon="💊", layout="centered")
 
 st.markdown("""
     <style>
-    body {
+    .stApp {
         background-color: #30353d;
         color: white;
     }
@@ -41,6 +41,7 @@ st.markdown("""
     </style>
 """, unsafe_allow_html=True)
 
+# Hastalık veritabanı
 hastalik_cozum_db = {
     "soğuk algınlığı": "Bol su iç, dinlen, vitamin C al.",
     "baş ağrısı": "Yeterli uyku al, bol su iç, sakinleşmek için derin nefes al.",
@@ -75,10 +76,15 @@ if st.button("🚀 **Çözüm Bul**"):
         highest_similarity = 0
 
         for hastalik in hastaliklar:
-            similarity = calculate_similarity(user_input.lower(), hastalik.lower())
-            if similarity > highest_similarity:
-                highest_similarity = similarity
+            if hastalik in user_input.lower():
                 best_match = hastalik
+                highest_similarity = 1.0
+                break  
+            else:
+                similarity = calculate_similarity(user_input.lower(), hastalik.lower())
+                if similarity > highest_similarity:
+                    highest_similarity = similarity
+                    best_match = hastalik
 
         if best_match and highest_similarity > 0.4:
             st.success(f"✅ **En benzer hastalık:** {best_match}")
@@ -89,3 +95,4 @@ if st.button("🚀 **Çözüm Bul**"):
 
 st.markdown("---")
 st.caption("🧠 Bu uygulama sadece bilgilendirme amaçlıdır. **Ciddi durumlarda lütfen doktora danışınız.**")
+
